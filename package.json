@@ -1,0 +1,14 @@
+{
+  "name": "ghostrepo-gaia-calculator",
+  "version": "1.0.0",
+  "description": "Firefox OS (Gaia) calculator, resurrected and modernized by GhostRepo.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test \"test/**/*.test.js\""
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LucioD3v/ghostrepo-gaia-calculator"
+  }
+}
