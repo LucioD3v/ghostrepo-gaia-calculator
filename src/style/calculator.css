@@ -1,100 +1,172 @@
-body, html {
+/* Calculator styles — resurrected & modernized by GhostRepo.
+ *
+ * The original Firefox OS (Gaia) CSS used absolute pixel positioning and PNG
+ * button sprites tuned for one exact phone screen, so it broke on any other
+ * viewport. This rebuild preserves the Gaia VISUAL IDENTITY — the dark slate
+ * palette, the orange Clear key, the green Equals key, the big right-aligned
+ * display, the 4-column keypad — but lays it out with CSS grid so it is
+ * responsive and correctly aligned on any screen.
+ *
+ * Gaia palette preserved:
+ *   background slate   #1d2125
+ *   orange (Clear)     #e35b24   (Firefox OS accent)
+ *   green  (Equals)    #6aa426
+ */
+
+:root {
+  --gaia-bg: #1d2125;
+  --gaia-panel: #272c31;
+  --gaia-key: #2f353b;
+  --gaia-key-active: #3b434a;
+  --gaia-text: #ffffff;
+  --gaia-orange: #e35b24;
+  --gaia-orange-active: #c84d1b;
+  --gaia-green: #6aa426;
+  --gaia-green-active: #588a1f;
+  --gaia-error: rgba(255, 0, 0, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden;
-  font-family: MozTT, sans-serif; 
-  font-weight: normal;
-  font-size: 10px;
-  background: #1d2125 url("images/background.png") no-repeat 0 -20px;
 }
 
-.row {
-  padding-left: 4px;
-  padding-right: 4px;
-  display: block;
+body {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 16px;
+  overflow-x: hidden;
+  background: var(--gaia-bg);
+  color: var(--gaia-text);
+  font-family: 'Fira Sans', 'Segoe UI', system-ui, sans-serif;
+  font-weight: 300;
 }
 
-input {
-  -moz-appearance: none;
-  padding: 0;
-  margin: 0;
-  border: 0;
-
-  background: transparent;
-  background-repeat: no-repeat;
-  background-position: 4px 0;
-
-  color: white;
-  font-family: MozTT, sans-serif; 
-  font-weight: 500;
-  font-size: 2.06rem;
-
-  width: 80px;
-  height: 6rem;
-  line-height: 6rem;
-
-  /* For an easier touch target, buttons are not exactly centered and
-     are bigger at the bottom */
-  padding-bottom: 1rem;
-
-  /* text nodes in the source code affect the layout */
-  margin-right: -5px;
+/* The calculator frame: display on top, keypad below, stacked vertically.
+ * min-width:0 stops a long number in the display from stretching the frame. */
+.calculator {
+  width: 100%;
+  max-width: 340px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-input.small {
-  display: inline;
-}
-
-input::-moz-focus-inner {
-  padding: 0;
-  margin: 0;
-  border: 0
-}
-
-input:active {
-  background-image: url("images/button-active.png");
-}
-
-input.small:active {
-  background-image: url("images/button-active-small.png");
-}
-
-input[disabled] {
-  pointer-events: none;
-}
-
-input:not(.small) {
-  right: 8px;
-  bottom: 241px;
-  width: 156px;
-}
-
-/* Result Display */
+/* Result display */
 #display {
-  color: white;
-
-  margin-left: 8px;
-  margin-top: 8px;
-  margin-bottom: 10px;
-
-  width: calc(100% - 16px);
-  height: 142px;
-  line-height: 142px;
+  background: var(--gaia-panel);
+  border-radius: 14px;
+  height: 130px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: hidden;
+  min-width: 0;
 }
 
 #display b {
+  font-weight: 200;
+  font-size: clamp(2.5rem, 14vw, 4rem);
+  line-height: 1;
   transform-origin: right center;
-  position: absolute;
-  right: 16px;
-
-  line-height: 142px;
-  font-family: MozTT, sans-serif; 
-  font-weight: 300;
-  font-size: 8.25rem;
+  /* The number must wrap/clip inside the box, never widen the calculator. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 #display.error {
-  background: none repeat scroll 0 0 rgba(255, 0, 0, 0.3);
+  background: var(--gaia-error);
 }
 
+/* Keypad: five stacked rows, each a 4-column grid. */
+.keypad {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+input {
+  appearance: none;
+  -moz-appearance: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  height: 60px;
+  border-radius: 12px;
+  background: var(--gaia-key);
+  color: var(--gaia-text);
+  font-family: inherit;
+  font-weight: 400;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.12s ease, transform 0.05s ease;
+  user-select: none;
+}
+
+input:hover:not([disabled]) {
+  background: var(--gaia-key-active);
+}
+
+input:active:not([disabled]) {
+  background: var(--gaia-key-active);
+  transform: scale(0.96);
+}
+
+input:focus-visible {
+  outline: 2px solid #8ab4ff;
+  outline-offset: 2px;
+}
+
+/* The empty top-left slot: invisible but holds its grid cell. */
+input[disabled] {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Operators: Gaia dark key with an orange glyph. */
+input[data-type='operator'] {
+  color: var(--gaia-orange);
+  font-weight: 500;
+}
+
+/* Clear (C) — Gaia's orange key, spanning the top row's right half. */
+input[value='C'] {
+  grid-column: 3 / 5;
+  background: var(--gaia-orange);
+  color: var(--gaia-text);
+  font-weight: 500;
+}
+
+input[value='C']:hover:not([disabled]),
+input[value='C']:active:not([disabled]) {
+  background: var(--gaia-orange-active);
+}
+
+/* Equals (=) — Gaia's green key. */
+input[value='='] {
+  background: var(--gaia-green);
+  color: var(--gaia-text);
+  font-weight: 500;
+}
+
+input[value='=']:hover:not([disabled]),
+input[value='=']:active:not([disabled]) {
+  background: var(--gaia-green-active);
+}

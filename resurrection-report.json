@@ -1,11 +1,11 @@
 {
   "project": "GhostRepo",
-  "repository": "GhostRepo",
+  "repository": "ghostrepo-gaia-calculator",
   "status": "RESURRECTED",
-  "timestamp": "2026-11-03T17:34:11Z",
+  "timestamp": "2026-11-03T20:49:01Z",
   "scope": "javascript-web-legacy",
   "metrics": {
-    "lines_modernized": 777,
+    "lines_modernized": 1039,
     "legacy_patterns_removed": 63,
     "breakdown": {
       "var_to_const_let": 55,
